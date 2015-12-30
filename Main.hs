@@ -70,8 +70,8 @@ formatResult result contents = toLazyText $
 
 cuteIndent :: PositionedComment -> Builder
 cuteIndent comment = fromString $
-    replicate (fromIntegral $ colNo comment - 1) ' ' ++
-        "^-- SC" ++ show (codeNo comment) ++ ": " ++ messageText comment
+  replicate (fromIntegral $ colNo comment - 1) ' ' ++
+      "^-- SC" ++ show (codeNo comment) ++ ": " ++ messageText comment
 
 runCheck :: String -> String -> S.ActionM ()
 runCheck url contents =
