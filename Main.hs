@@ -18,6 +18,8 @@ import           ShellCheck.Formatter.Format
 import           ShellCheck.Interface
 import qualified Web.Scotty                  as S
 
+import qualified Files
+
 maxLen :: Int
 maxLen = 1024 * 1024
 
@@ -87,7 +89,7 @@ main :: IO ()
 main = S.scotty 3000 $ do
   S.get "/" $ do
     S.setHeader "Content-Type" "text/html"
-    S.file "index.html"
+    S.raw Files.index
   S.post "/" $ do
     contents <- S.body
     runCheck "" (L.toString contents)

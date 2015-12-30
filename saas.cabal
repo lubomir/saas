@@ -20,3 +20,4 @@ executable          saas
                   , http-types
                   , http-client
                   , mtl
+                  , file-embed
