@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>ShellCheck as a Service</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        background: #eee;
+        color: #333;
+        line-height: 1.4;
+      }
+      .container {
+        max-width: 40em;
+        margin: 1em auto 2em auto;
+      }
+      pre {
+        background-color: #333;
+        color: #eee;
+        padding: 0.5em;
+        overflow: auto;
+      }
+      .lead {
+        font-size: 125%;
+      }
+      code {
+        background: #333;
+        color: #eee;
+        display: inline-block;
+        padding: 0.1em 0.3em;
+      }
+      a {
+        color: #337ab7;
+        background-color: #eee;
+        text-decoration: none;
+      }
+      a:hover, a:focus {
+        color: #23527c;
+        background-color: #eee;
+        text-decoration: underline;
+      }
+      h1, h2 {
+        color: #555;
+        background-color: #eee;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>ShellCheck as a Service</h1>
+
+      <div class="lead">
+        <p>You have surely seen it as recommended way to install a
+        project. Just <code>curl</code> a script and pipe it to
+        <code>bash</code>. It's so simple.</p>
+      </div>
+
+      <p>But what happens if the script does something malicious? Easy answer:
+      you're screwed.</p>
+
+      <p>But don't panic. We've got you covered. This is a service that will
+      check the script with <a href="http://www.shellcheck.net/">ShellCheck</a>
+      and give you information on what problems are there with the script.</p>
+
+      <h2>Usage</h2>
+
+      <p>Just prepend <code>http://localhost:3000/</code> to the URL you copied
+      from the site of the project you are interested in and <code>curl</code>
+      it.</p>
+
+      <p>Alternatively, you can upload a file with a POST request and get the
+      same output.</p>
+
+      <h2>Examples</h2>
+
+      <pre>$ curl http://localhost:3000/https://nixos.org/nix/install
+https://nixos.org/nix/install: line 1:
+
+^-- SC2148: Tips depend on target shell and yours is unknown. Add a shebang.
+
+
+https://nixos.org/nix/install: line 18:
+    echo "$0: $@" &gt;&amp;2
+              ^-- SC2145: Argument mixes string and array. Use * or separate argument.
+
+
+https://nixos.org/nix/install: line 41:
+[ -e "$unpack"/*/install ] ||
+     ^-- SC2144: -e doesn't work with globs. Use a for loop.</pre>
+
+
+<pre>$ curl http://localhost:3000/http://dist.crystal-lang.org/apt/setup.sh
+Looks fine here. But it can still do something nasty...</pre>
+
+<pre>$ curl --data-binary @my-awesome-script.sh http://localhost:3000/
+local-file: line 30:
+if [[ "$version" != *"$sha" ]]; then
+   ^-- SC2039: In POSIX sh, [[ ]] is not supported. </pre>
+
+      <p>Examples were retrieved on 2015-12-30. You would not believe how
+      difficult it was to find one without errors.</p>
+
+      <h2>Disclaimer</h2>
+
+      <p>This is a joke. Don't use this service for anything security related.
+      Heck, don't run random script from the net without making sure they are
+      what they claim to be.</p>
+
+      <p>Checking a local file might be useful for situations where you can't
+      install <a href="http://www.shellcheck.net/">ShellCheck</a> directly. If
+      you can, do it! It's most likely packaged by your distribution
+      already.</p>
+
+      <p>
+      See <a href="http://curlpipesh.tumblr.com/">list of sites</a> that
+      recommend piping to <code>bash</code>.
+      </p>
+
+      <h2>Sources</h2>
+
+      <p>The source code for this app is available on GitHub under the GPLv3
+      license.</p>
+
+    </div>
+
+  </body>
+</html>
+
