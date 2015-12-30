@@ -2,7 +2,7 @@
 
 import qualified Control.Exception           as E
 import           Control.Lens
-import           Control.Monad.IO.Class
+import           Control.Monad.Except
 import qualified Data.ByteString.Lazy.UTF8   as L (toString)
 import qualified Data.ByteString.UTF8        as B (toString)
 import           Data.Monoid
@@ -40,14 +40,15 @@ getFile url = (extract <$> get url) `E.catch` handler
                                         , "\n"
                                         ]
 
-checkFile :: String -> String -> CheckResult
-checkFile url contents = runIdentity $ do
-  let checkspec = emptyCheckSpec { csFilename = url
-                                 , csScript = contents
-                                 }
-  let sys = undefined -- FIXME needed for checking sourced files
-  result <- checkScript sys checkspec
-  return result
+checkFile :: String -> String -> Either Text CheckResult
+checkFile url contents = do
+    let checkspec = emptyCheckSpec { csFilename = url
+                                   , csScript = contents
+                                   }
+    checkScript dummyInterface checkspec
+  where
+    dummyInterface = SystemInterface { siReadFile = die }
+    die = return $ Left "Error: script sources another script\n"
 
 formatResult :: CheckResult -> String -> Text
 formatResult CheckResult{crComments=[]} _ =
@@ -75,7 +76,9 @@ cuteIndent comment = fromString $
 
 runCheck :: String -> String -> S.ActionM ()
 runCheck url contents =
-  S.text (formatResult (checkFile url contents) contents)
+  case checkFile url contents of
+    Left err  -> S.status badRequest400 >> S.text err
+    Right res -> S.text (formatResult res contents)
 
 main :: IO ()
 main = S.scotty 3000 $ do

@@ -19,3 +19,4 @@ executable          saas
                   , text
                   , http-types
                   , http-client
+                  , mtl
