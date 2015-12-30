@@ -57,9 +57,12 @@ formatResult result contents = toLazyText $
     mconcat $ map (\x -> do
         let lineNum = lineNo (head x)
         let line = if lineNum < 1 || lineNum > lineCount
-                    then ""
+                    then mempty
                     else fileLines !! fromIntegral (lineNum - 1)
-        fromString (crFilename result) <> ": line " <> decimal lineNum <> ":\n"
+        let filename = if null (crFilename result)
+                        then mempty
+                        else fromString (crFilename result) <> ": "
+        filename <> "line " <> decimal lineNum <> ":\n"
             <> fromString line <> singleton '\n'
             <> mconcat (map (\c -> cuteIndent c <> "\n") x) <> "\n"
        ) groups
@@ -87,7 +90,7 @@ main = S.scotty 3000 $ do
     S.file "index.html"
   S.post "/" $ do
     contents <- S.body
-    runCheck "local-file" (L.toString contents)
+    runCheck "" (L.toString contents)
   S.get (S.regex "^/(https?://.+)$") $ do
     url <- S.param "1"
     mcontents <- liftIO $ getFile url
