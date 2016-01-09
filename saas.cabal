@@ -22,3 +22,4 @@ executable          saas
                   , http-client
                   , mtl
                   , file-embed
+                  , warp

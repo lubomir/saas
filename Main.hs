@@ -5,17 +5,21 @@ import           Control.Lens
 import           Control.Monad.Except
 import qualified Data.ByteString.Lazy.UTF8   as L (toString)
 import qualified Data.ByteString.UTF8        as B (toString)
+import           Data.Maybe                  (fromMaybe)
 import           Data.Monoid
+import qualified Data.String                 as Str
 import           Data.Text.Lazy              (Text, pack)
 import           Data.Text.Lazy.Builder
 import           Data.Text.Lazy.Builder.Int
 import           GHC.Exts                    (groupWith)
 import           Network.HTTP.Client         (HttpException (..))
 import           Network.HTTP.Types          (badRequest400)
+import           Network.Wai.Handler.Warp
 import           Network.Wreq
 import           ShellCheck.Checker
 import           ShellCheck.Formatter.Format
 import           ShellCheck.Interface
+import           System.Environment
 import qualified Web.Scotty                  as S
 
 import qualified Files
@@ -86,16 +90,20 @@ runCheck url contents =
     Right res -> S.text (formatResult res contents)
 
 main :: IO ()
-main = S.scotty 3000 $ do
-  S.get "/" $ do
-    S.setHeader "Content-Type" "text/html"
-    S.raw Files.index
-  S.post "/" $ do
-    contents <- S.body
-    runCheck "" (L.toString contents)
-  S.get (S.regex "^/(https?://.+)$") $ do
-    url <- S.param "1"
-    mcontents <- liftIO $ getFile url
-    case mcontents of
-      Left err -> S.status badRequest400 >> S.text err
-      Right contents -> runCheck url contents
+main = do
+  host <- fromMaybe "*4" <$> lookupEnv "OPENSHIFT_DIY_IP"
+  putStrLn $ "Listening on " ++ host
+  let opts = setPort 8080 $ setHost (Str.fromString host) defaultSettings
+  S.scottyOpts (S.Options 1 opts) $ do
+      S.get "/" $ do
+        S.setHeader "Content-Type" "text/html"
+        S.raw Files.index
+      S.post "/" $ do
+        contents <- S.body
+        runCheck "" (L.toString contents)
+      S.get (S.regex "^/(https?://.+)$") $ do
+        url <- S.param "1"
+        mcontents <- liftIO $ getFile url
+        case mcontents of
+          Left err -> S.status badRequest400 >> S.text err
+          Right contents -> runCheck url contents
