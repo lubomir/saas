@@ -66,7 +66,7 @@
 
       <h2>Usage</h2>
 
-      <p>Just prepend <code>http://localhost:3000/</code> to the URL you copied
+      <p>Just prepend <code>http://saas-lsedlar.rhcloud.com/</code> to the URL you copied
       from the site of the project you are interested in and <code>curl</code>
       it.</p>
 
@@ -75,7 +75,7 @@
 
       <h2>Examples</h2>
 
-      <pre>$ curl http://localhost:3000/https://nixos.org/nix/install
+      <pre>$ curl http://saas-lsedlar.rhcloud.com/https://nixos.org/nix/install
 https://nixos.org/nix/install: line 1:
 
 ^-- SC2148: Tips depend on target shell and yours is unknown. Add a shebang.
@@ -91,10 +91,10 @@ https://nixos.org/nix/install: line 41:
      ^-- SC2144: -e doesn't work with globs. Use a for loop.</pre>
 
 
-<pre>$ curl http://localhost:3000/http://dist.crystal-lang.org/apt/setup.sh
+<pre>$ curl http://saas-lsedlar.rhcloud.com/http://dist.crystal-lang.org/apt/setup.sh
 Looks fine here. But it can still do something nasty...</pre>
 
-<pre>$ curl --data-binary @my-awesome-script.sh http://localhost:3000/
+<pre>$ curl --data-binary @my-awesome-script.sh http://saas-lsedlar.rhcloud.com/
 line 30:
 if [[ "$version" != *"$sha" ]]; then
    ^-- SC2039: In POSIX sh, [[ ]] is not supported. </pre>
