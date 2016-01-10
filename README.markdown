@@ -1,4 +1,4 @@
-# [ShellCheck as a Service](saas)
+# [ShellCheck as a Service](http://saas-lsedlar.rhcloud.com/)
 
 > You have surely seen it as recommended way to install a project. Just curl a
 > script and pipe it to bash. It's so simple.
@@ -10,7 +10,6 @@ But don't panic. We've got you covered. This is a service that will check the
 script with [ShellCheck] and give you information on what problems are there
 with the script.
 
-[saas]: http://saas-lsedlar.rhcloud.com/
 
 ## Disclaimer
 
