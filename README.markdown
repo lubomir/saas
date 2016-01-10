@@ -21,6 +21,4 @@ Checking a local file might be useful for situations where you can't install
 [ShellCheck] directly. If you can, do it! It's most likely packaged by your
 distribution already.
 
-See list of sites that recommend piping to bash.
-
 [shellcheck]: http://www.shellcheck.net/
